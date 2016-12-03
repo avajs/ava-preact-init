@@ -86,71 +86,75 @@ test('has existing stage-2 preset', async t => {
 	t.deepEqual(get(pkg, 'ava.babel.presets'), ['stage-2', 'es2015-node4']);
 });
 
-test.serial('installs all dependencies', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
+const isNode4 = process.version[1] === '4';
 
-	await m({cwd: path.dirname(filepath)});
+if (!isNode4) {
+	test.serial('installs all dependencies', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		await m({cwd: path.dirname(filepath)});
 
-	t.truthy(get(pkg, 'devDependencies.babel-register'));
-	t.truthy(get(pkg, 'devDependencies.babel-plugin-transform-react-jsx'));
-	t.truthy(get(pkg, 'devDependencies.babel-preset-es2015-node4'));
-	t.truthy(get(pkg, 'devDependencies.babel-preset-stage-2'));
-});
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
 
-test.serial('skip babel-register dependency', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({
-		devDependencies: {'babel-register': '*'}
-	}), 'package.json');
+		t.truthy(get(pkg, 'devDependencies.babel-register'));
+		t.truthy(get(pkg, 'devDependencies.babel-plugin-transform-react-jsx'));
+		t.truthy(get(pkg, 'devDependencies.babel-preset-es2015-node4'));
+		t.truthy(get(pkg, 'devDependencies.babel-preset-stage-2'));
+	});
 
-	await m({cwd: path.dirname(filepath)});
+	test.serial('skip babel-register dependency', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({
+			devDependencies: {'babel-register': '*'}
+		}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	t.is(get(pkg, 'devDependencies.babel-register'), '*');
-});
+		await m({cwd: path.dirname(filepath)});
 
-test.serial('skip babel-plugin-transform-react-jsx dependency', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({
-		devDependencies: {'babel-plugin-transform-react-jsx': '*'}
-	}), 'package.json');
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		t.is(get(pkg, 'devDependencies.babel-register'), '*');
+	});
 
-	await m({cwd: path.dirname(filepath)});
+	test.serial('skip babel-plugin-transform-react-jsx dependency', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({
+			devDependencies: {'babel-plugin-transform-react-jsx': '*'}
+		}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	t.is(get(pkg, 'devDependencies.babel-plugin-transform-react-jsx'), '*');
-});
+		await m({cwd: path.dirname(filepath)});
 
-test.serial('skip babel-preset-es2015-node4 dependency', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({
-		devDependencies: {'babel-preset-es2015-node4': '*'}
-	}), 'package.json');
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		t.is(get(pkg, 'devDependencies.babel-plugin-transform-react-jsx'), '*');
+	});
 
-	await m({cwd: path.dirname(filepath)});
+	test.serial('skip babel-preset-es2015-node4 dependency', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({
+			devDependencies: {'babel-preset-es2015-node4': '*'}
+		}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	t.is(get(pkg, 'devDependencies.babel-preset-es2015-node4'), '*');
-});
+		await m({cwd: path.dirname(filepath)});
 
-test.serial('skip babel-preset-es2015-node4 dependency if es2015 preset is installed', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({
-		devDependencies: {'babel-preset-es2015': '*'}
-	}), 'package.json');
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		t.is(get(pkg, 'devDependencies.babel-preset-es2015-node4'), '*');
+	});
 
-	await m({cwd: path.dirname(filepath)});
+	test.serial('skip babel-preset-es2015-node4 dependency if es2015 preset is installed', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({
+			devDependencies: {'babel-preset-es2015': '*'}
+		}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	t.falsy(get(pkg, 'devDependencies.babel-preset-es2015-node4'));
-	t.is(get(pkg, 'devDependencies.babel-preset-es2015'), '*');
-});
+		await m({cwd: path.dirname(filepath)});
 
-test.serial('skip babel-preset-stage-2 dependency', async t => {
-	const filepath = tempWrite.sync(JSON.stringify({
-		devDependencies: {'babel-preset-stage-2': '*'}
-	}), 'package.json');
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		t.falsy(get(pkg, 'devDependencies.babel-preset-es2015-node4'));
+		t.is(get(pkg, 'devDependencies.babel-preset-es2015'), '*');
+	});
 
-	await m({cwd: path.dirname(filepath)});
+	test.serial('skip babel-preset-stage-2 dependency', async t => {
+		const filepath = tempWrite.sync(JSON.stringify({
+			devDependencies: {'babel-preset-stage-2': '*'}
+		}), 'package.json');
 
-	const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-	t.is(get(pkg, 'devDependencies.babel-preset-stage-2'), '*');
-});
+		await m({cwd: path.dirname(filepath)});
+
+		const pkg = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		t.is(get(pkg, 'devDependencies.babel-preset-stage-2'), '*');
+	});
+}
