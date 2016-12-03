@@ -47,4 +47,4 @@ Install this module globally `$ npm install --global ava-preact-init` and run `$
 
 ## License
 
-MIT © [vadimdemedes](https://github.com/vadimdemedes)
+MIT © [Vadim Demedes](https://github.com/vadimdemedes)
